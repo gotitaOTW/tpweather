@@ -1,9 +1,9 @@
 import axios from 'axios'
 import { useContext, createContext, useState, useEffect } from 'react'
 
-const WeatherContext = createContext();
+export const WeatherContext = createContext();
 
-const weatherContextProvider=({children})=>{
+export const WeatherContextProvider = ({ children }) => {
     //https://api.openweathermap.org/data/2.5/forecast?q=Buenos Aires&appid=4dd92e406c57a71ac7d4ec01c8cd5a2d&units=metric&lang=es
     const [nombreCiudadActual, setNombreCiudadActual] = useState("Buenos Aires");//hardcodeado, buscar como pedir la ubicacion
 
@@ -52,31 +52,31 @@ const weatherContextProvider=({children})=>{
     ]);
     //array con objetos de ciudad: nombre, temp, iconClima, pais, sensTermica y textClima (estas ultimas solo se muestran en la main)
 
-    const getBasicInfoOfCity = (ciudad) =>{//devuelve nombre, temp, iconClima, pais, sensTermica y textClima (estas ultimas solo se muestran en la main)
-
+    const getBasicInfoOfCity = (ciudad) => {
+        //devuelve nombre, temp, iconClima, pais, sensTermica y textClima (estas ultimas solo se muestran en la main)
     }
 
-    useEffect(()=>{
+    useEffect(() => {
         //trae la inof de ciudad actual con getBasicInfoOfCity
         //filtra y guarda en siguientesDias tambien
-        },nombreCiudadActual);
+    }, [nombreCiudadActual]);
         
-    useEffect(()=>{
+    useEffect(() => {
         //trae la inof de las bigCities con getBasicInfoOfCity y las guarda en su Setter
-        },bigCitiesNames);
+    }, [bigCitiesNames]);
 
-        useEffect(()=>{
-            const value={
-                setNombreCiudadActual, 
-                setBigCitiesNames, 
-                ciudadActual, 
-                siguientesHoras, 
-                siguientesDias, 
-                bigCities
-            }
-        },[])
+    const value = {
+        setNombreCiudadActual, 
+        setBigCitiesNames, 
+        ciudadActual, 
+        siguientesHoras, 
+        siguientesDias, 
+        bigCities
+    };
 
-        return <WeatherContext.Provider value={value}> {children} </WeatherContext.Provider>   
+    return (
+        <WeatherContext.Provider value={value}>
+            {children}
+        </WeatherContext.Provider>
+    );
 }
-
-export default {WeatherContext, weatherContextProvider};

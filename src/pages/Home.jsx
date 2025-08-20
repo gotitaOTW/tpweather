@@ -1,5 +1,5 @@
 import { useContext } from "react"
-import WeatherContext from "../contexts/WeatherContext"
+import { WeatherContext } from "../contexts/weatherContext";
 import CiudadMain from "../components/CiudadMain";
 const Home = () =>{
 
