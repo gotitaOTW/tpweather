@@ -57,12 +57,12 @@ export const WeatherContextProvider = ({ children }) => {
     }
 
     useEffect(() => {
-        //trae la inof de ciudad actual con getBasicInfoOfCity
+        //trae la inof de ciudad actual con getBasicInfoOfCity, si no puede deja la que estaba y muestra que no existe si error 404 con msjtio bonito
         //filtra y guarda en siguientesDias tambien
     }, [nombreCiudadActual]);
         
     useEffect(() => {
-        //trae la inof de las bigCities con getBasicInfoOfCity y las guarda en su Setter
+        //trae la info de las bigCities con getBasicInfoOfCity y las guarda en su Setter, si no puede alguna  no la agrega y muestra que no existe si error 404 con msjtio
     }, [bigCitiesNames]);
 
     const value = {
