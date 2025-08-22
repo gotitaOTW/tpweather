@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useContext } from "react";
-import { WeatherContext } from "../contexts/WeatherContext";
+import { WeatherContext } from "../contexts/weatherContext";
+
 
 
 const Buscadores=()=>{
@@ -19,6 +20,14 @@ const Buscadores=()=>{
         }
     }
 
+    const cambiarTipoGrados = (e) =>{
+        e.preventDeafault();
+        value.cambiarTemperatura();
+    }
+
+    const handleChangeIdioma = (e) =>{
+        value.setIdioma(e.target.value);
+    }
 
 return(
     <>
@@ -32,6 +41,20 @@ return(
             {arrayAAgregar === "1" ? "Cambiar Ciudad" : "Agregar Ciudad"}
         </button>
     </form>
+
+
+    C° <input type="radio" name="tipoGrado" value="metric" onChange={(e)=>cambiarTipoGrados(e)}></input>
+    F° <input type="radio" name="tipoGrado" value="imperial" onChange={(e)=>cambiarTipoGrados(e)}></input>
+
+    <select value={idioma} onChange={handleChangeIdioma}>
+        <option value="">Idioma</option>
+        {idiomas.map((i) => (
+          <option key={i.valor} value={i.valor}>
+            {i.nombre}
+          </option>
+        ))}
+      </select>
+
         
     </>
 )

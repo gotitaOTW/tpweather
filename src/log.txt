@@ -1,0 +1,9 @@
+todo esta listo, falta rellenar con:
+
+hacer las funciones de contexto:
+- traer datos de la api y validar con lo q hay
+
+hacer los returns de las funciones:
+mostrar los datos Y ERRORES de forma bonita
+
+ver q pueda ejecutarse

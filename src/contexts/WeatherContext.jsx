@@ -5,7 +5,9 @@ export const WeatherContext = createContext();
 
 export const WeatherContextProvider = ({ children }) => {
     //https://api.openweathermap.org/data/2.5/forecast?q=Buenos Aires&appid=4dd92e406c57a71ac7d4ec01c8cd5a2d&units=metric&lang=es
+    const [tipoTemperatura, setTipoTemperatura] = useState("metric");
     const [nombreCiudadActual, setNombreCiudadActual] = useState("Buenos Aires");//hardcodeado, buscar como pedir la ubicacion
+    const [idioma, setIdioma] = useState("sp");
 
     const [ciudadActual, setCiudadActual] = useState({
         nombre: "Buenos Aires",
@@ -65,13 +67,41 @@ export const WeatherContextProvider = ({ children }) => {
         //trae la info de las bigCities con getBasicInfoOfCity y las guarda en su Setter, si no puede alguna  no la agrega y muestra que no existe si error 404 con msjtio
     }, [bigCitiesNames]);
 
+    const cambiarTemperatura = () =>{
+        let nuevoTipo="metric";
+        if(tipoTemperatura=="metric"){nuevoTipo="imperial";}
+        setTipoTemperatura(nuevoTipo);
+    }
+
+    const idiomas = [
+        { nombre: "English", valor: "en" },
+        { nombre: "Spanish", valor: "sp" },
+        { nombre: "German", valor: "de" }
+      ];
+
+      function ponerBigCityEnMain(ciudad)
+      {
+            const copia = [...bigCitiesNames];
+            const index = copia.indexOf(ciudad);
+          
+            if (index !== -1) {
+              copia[index] = nombreCiudadActual;
+              setBigCitiesNames(copia);
+              setNombreCiudadActual(ciudad);
+            }
+      }
+
     const value = {
         setNombreCiudadActual, 
         setBigCitiesNames, 
         ciudadActual, 
         siguientesHoras, 
         siguientesDias, 
-        bigCities
+        bigCities,
+        cambiarTemperatura,
+        idiomas,
+        setIdioma,
+        ponerBigCityEnMain
     };
 
     return (
