@@ -10,12 +10,12 @@ export const WeatherContextProvider = ({ children }) => {
     const [idioma, setIdioma] = useState("sp");
 
     const [ciudadActual, setCiudadActual] = useState({
-        nombre: "Buenos Aires",
-        temp: 22,
-        iconoClima: "01d",
-        pais: "Argentina",
-        sensTermica: 21,
-        textClima: "Despejado",
+        name:"Buenos Aires",
+        pais: "AR",
+        temp:13,
+        sensTermica:15,
+        icon:"01d",
+        textClima:"despejado"
     });//con el nombre de la ciudad carga acá la basicInfo
     const [siguientesHoras, setSiguientesHoras] = useState([
         { hora: "15:00", temp: 23, icon: "01d" },
@@ -54,13 +54,61 @@ export const WeatherContextProvider = ({ children }) => {
     ]);
     //array con objetos de ciudad: nombre, temp, iconClima, pais, sensTermica y textClima (estas ultimas solo se muestran en la main)
 
-    const getBasicInfoOfCity = (ciudad) => {
-        //devuelve nombre, temp, iconClima, pais, sensTermica y textClima (estas ultimas solo se muestran en la main)
+    const getResponseFromCity = (ciudad) => {
+        const apiid="4dd92e406c57a71ac7d4ec01c8cd5a2d";
+        const path=`https://api.openweathermap.org/data/2.5/forecast?q=${ciudad}&appid=${apiid}&units=${tipoTemperatura}&lang=${idioma}`;
+        try {
+         const response=axios.get(path);
+         return response;
+
+        } catch (error) {
+            return error;
+        }
+    
+        //name, pais, temp, sensTermica, icon, textClima
+    }
+
+    const getBasicInfoFromResponse=(response)=>{
+        if(!response)return null;
+        const basicInfo={
+            name:ciudad,
+            pais: response.city.country,
+            temp:response.list[0].main.temp,
+            sensTermica:response.list[0].main.feels_like,
+            icon:response.list[0].weather.icon,
+            textClima:response.list[0].weather.description
+        }
+        return basicInfo;
     }
 
     useEffect(() => {
         //trae la inof de ciudad actual con getBasicInfoOfCity, si no puede deja la que estaba y muestra que no existe si error 404 con msjtio bonito
         //filtra y guarda en siguientesDias tambien
+        const response = getResponseFromCity(nombreCiudadActual);
+        const basicInfo = getBasicInfoFromResponse(response);
+
+        const sigHoras=[];
+        const sigDias=[];
+        for (let i = 0; i < 8; i++) {//sigHoras
+           let hora = {
+               hora:response.list[i].dt_txt,
+               temp:response.list[i].main.temp,
+               icon:response.list[i].weather.icon
+           }
+           sigHoras.push(hora); 
+        }
+        for (let i = 0; i < response.list.length; i+=8) {//sigDias
+           let dia = {
+               dia:response.list[i].dt_txt,
+               max:response.list[i].main.temp_max,
+               min:response.list[i].main.temp_min,
+               icon:response.list[i].weather.icon
+           }
+           sigDias.push(dia);
+        }
+        setCiudadActual(basicInfo);
+        setSiguientesHoras(sigHoras);
+        setSiguientesDias(sigDias);
     }, [nombreCiudadActual]);
         
     useEffect(() => {

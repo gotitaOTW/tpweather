@@ -48,7 +48,7 @@ return(
 
     <select value={idioma} onChange={handleChangeIdioma}>
         <option value="">Idioma</option>
-        {idiomas.map((i) => (
+        {value.idiomas.map((i) => (
           <option key={i.valor} value={i.valor}>
             {i.nombre}
           </option>
