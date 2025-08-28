@@ -9,6 +9,7 @@ export const WeatherContextProvider = ({ children }) => {
     const [nombreCiudadActual, setNombreCiudadActual] = useState("Buenos Aires");//hardcodeado, buscar como pedir la ubicacion
     const [idioma, setIdioma] = useState("sp");
 
+    const [ciudadActual, setCiudadActual] = useState({});
     // const [ciudadActual, setCiudadActual] = useState({
     //     name:"Buenos Aires",
     //     pais: "AR",
@@ -17,14 +18,14 @@ export const WeatherContextProvider = ({ children }) => {
     //     icon:"01d",
     //     textClima:"despejado"
     // });//con el nombre de la ciudad carga acá la basicInfo
-    // const [siguientesHoras, setSiguientesHoras] = useState([
+     const [siguientesHoras, setSiguientesHoras] = useState([]);
     //     { hora: "15:00", temp: 23, icon: "01d" },
     //     { hora: "18:00", temp: 21, icon: "02d" },
     //     { hora: "21:00", temp: 19, icon: "03n" },
     //     { hora: "00:00", temp: 17, icon: "04n" },
     //     { hora: "03:00", temp: 16, icon: "10n" },
     // ]);//array conn temp, icon y hora, proximos 5 objetos
-    // const [siguientesDias, setSiguientesDias] = useState([
+     const [siguientesDias, setSiguientesDias] = useState([]);
     //     { fecha: "2025-08-21", max: 24, min: 15, icon: "01d" },
     //     { fecha: "2025-08-22", max: 22, min: 14, icon: "02d" },
     //     { fecha: "2025-08-23", max: 21, min: 13, icon: "03d" },
@@ -54,30 +55,38 @@ export const WeatherContextProvider = ({ children }) => {
     ]);
     //array con objetos de ciudad: nombre, temp, iconClima, pais, sensTermica y textClima (estas ultimas solo se muestran en la main)
 
-    const getResponseFromCity = (ciudad) => {
+    
+    
+        
+    
+    //name, pais, temp, sensTermica, icon, textClima
+        const getResponseFromCity = async (ciudad) => {
         const apiid="4dd92e406c57a71ac7d4ec01c8cd5a2d";
-        const path=`https://api.openweathermap.org/data/2.5/forecast?q=${ciudad}&appid=${apiid}&units=${tipoTemperatura}&lang=${idioma}`;
+        const path = `https://api.openweathermap.org/data/2.5/forecast?q=${ciudad}&appid=${apiid}&units=${tipoTemperatura}&lang=${idioma}`;
+      
         try {
-         const response=axios.get(path);
-         return response;
+          const response = await axios.get(path);
+          console.log(response.data.city);
+          return response.data;
 
         } catch (error) {
-            return error;
+          console.error("Error al traer data:", error);
+          return error;
         }
-    
-        //name, pais, temp, sensTermica, icon, textClima
-    }
+      };
+      
 
     const getBasicInfoFromResponse=(response)=>{
         if(!response)return null;
-        const basicInfo={
-            name:ciudad,
+        console.log(response.data.city);
+        const basicInfo = {
+            name: response.city.name,
             pais: response.city.country,
-            temp:response.list[0].main.temp,
-            sensTermica:response.list[0].main.feels_like,
-            icon:response.list[0].weather.icon,
-            textClima:response.list[0].weather.description
-        }
+            temp: response.list[0].main.temp, 
+            sensTermica: response.list[0].main.feels_like,
+            icon: response.list[0].weather[0].icon,
+            textClima: response.list[0].weather[0].description
+          };
         return basicInfo;
     }
 
@@ -85,6 +94,7 @@ export const WeatherContextProvider = ({ children }) => {
         //trae la inof de ciudad actual con getBasicInfoOfCity, si no puede deja la que estaba y muestra que no existe si error 404 con msjtio bonito
         //filtra y guarda en siguientesDias tambien
         const response = getResponseFromCity(nombreCiudadActual);
+        console.log(response);
         const basicInfo = getBasicInfoFromResponse(response);
 
         const sigHoras=[];

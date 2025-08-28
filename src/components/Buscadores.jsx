@@ -5,9 +5,10 @@ import { WeatherContext } from "../contexts/weatherContext";
 
 
 const Buscadores=()=>{
-    const {value} = useContext(WeatherContext);
+    const value = useContext(WeatherContext);
     const [arrayAAgregar, setArrayAAgregar]=useState("");
     const [ciudad, setCiudad] = useState("");
+    const [idioma] = useState("sp");
 
 
     const buscarCiudad = (e) =>{
