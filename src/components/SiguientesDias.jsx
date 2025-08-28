@@ -4,7 +4,7 @@ import { WeatherContext } from "../contexts/weatherContext";
 
 
 const SiguientesDias=()=>{
-    const {value} = useContext(WeatherContext);
+    const value = useContext(WeatherContext);
 }
 
 export default SiguientesDias;

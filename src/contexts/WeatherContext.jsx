@@ -32,27 +32,22 @@ export const WeatherContextProvider = ({ children }) => {
     //     { fecha: "2025-08-24", max: 23, min: 14, icon: "04d" },
     //     { fecha: "2025-08-25", max: 25, min: 16, icon: "01d" },
     // ]);//array con fecha, max/min y icon, proximos 5 objetos donde hora=12hs
-    const [bigCitiesNames, setBigCitiesNames] = useState([
-        "Madrid",
-        "Nueva York",
-        "Tokio",
-        "Londres",
-    ]);
+    const [bigCitiesNames, setBigCitiesNames] = useState([]);
     //nombres de otras ciudades, todas con .getTemp/icon y pais
-    const [bigCities, setBigCities] = useState([
-        {
-            nombre: "Madrid",
-            temp: 29,
-            iconClima: "01d",
-            pais: "España",
-        },
-        {
-            nombre: "Nueva York",
-            temp: 27,
-            iconClima: "03d",
-            pais: "EE.UU.",
-        },
-    ]);
+    const [bigCities, setBigCities] = useState([])
+    //     {
+    //         nombre: "Madrid",
+    //         temp: 29,
+    //         iconClima: "01d",
+    //         pais: "España",
+    //     },
+    //     {
+    //         nombre: "Nueva York",
+    //         temp: 27,
+    //         iconClima: "03d",
+    //         pais: "EE.UU.",
+    //     },
+    // ]);
     //array con objetos de ciudad: nombre, temp, iconClima, pais, sensTermica y textClima (estas ultimas solo se muestran en la main)
 
     
@@ -85,43 +80,69 @@ export const WeatherContextProvider = ({ children }) => {
             temp: response.list[0].main.temp, 
             sensTermica: response.list[0].main.feels_like,
             icon: response.list[0].weather[0].icon,
-            textClima: response.list[0].weather[0].description
+            textClima: response.list[0].weather[0].description,
+            min:response.list[0].main.temp_min,
+            max:response.list[0].main.temp_max
           };
+
         return basicInfo;
     }
 
     useEffect(() => {
         //trae la inof de ciudad actual con getBasicInfoOfCity, si no puede deja la que estaba y muestra que no existe si error 404 con msjtio bonito
         //filtra y guarda en siguientesDias tambien
-        const response = getResponseFromCity(nombreCiudadActual);
-        console.log(response);
-        const basicInfo = getBasicInfoFromResponse(response);
+        try {
+            const response = getResponseFromCity(nombreCiudadActual);
+            console.log(response);
+            const basicInfo = getBasicInfoFromResponse(response);
 
-        const sigHoras=[];
-        const sigDias=[];
-        for (let i = 0; i < 8; i++) {//sigHoras
-           let hora = {
-               hora:response.list[i].dt_txt,
-               temp:response.list[i].main.temp,
-               icon:response.list[i].weather.icon
-           }
-           sigHoras.push(hora); 
+            const sigHoras=[];
+            const sigDias=[];
+            for (let i = 0; i < 8; i++) {//sigHoras
+            let hora = {
+                hora:response.list[i].dt_txt,
+                temp:response.list[i].main.temp,
+                icon:response.list[i].weather.icon
+            }
+            sigHoras.push(hora); 
+            }
+            for (let i = 0; i < response.list.length; i+=8) {//sigDias
+            let dia = {
+                dia:response.list[i].dt_txt,
+                max:response.list[i].main.temp_max,
+                min:response.list[i].main.temp_min,
+                icon:response.list[i].weather.icon
+            }
+            sigDias.push(dia);
+            }
+            setCiudadActual(basicInfo);
+            setSiguientesHoras(sigHoras);
+            setSiguientesDias(sigDias);
+        } catch (error) {
+            console.error(error);
+            if(nombreCiudadActual)window.alert(`${nombreCiudadActual} no encontrada.`);
+            setNombreCiudadActual(ciudadActual.name);
+            //si el nombre solo sirve para buscar la ciudad, y, si no la encuentra no la pone por lo que hasta que no se cambie el nombre no va a cambiar la ciudad
+            //entonces esta línea no sería necesaria pero por las dudas, además queda bien
         }
-        for (let i = 0; i < response.list.length; i+=8) {//sigDias
-           let dia = {
-               dia:response.list[i].dt_txt,
-               max:response.list[i].main.temp_max,
-               min:response.list[i].main.temp_min,
-               icon:response.list[i].weather.icon
-           }
-           sigDias.push(dia);
-        }
-        setCiudadActual(basicInfo);
-        setSiguientesHoras(sigHoras);
-        setSiguientesDias(sigDias);
     }, [nombreCiudadActual]);
         
     useEffect(() => {
+        let response, basic;
+        let max, min;
+        const citiesInfo=[];
+        bigCitiesNames.forEach(name => {
+            try {
+                response = getResponseFromCity(name);
+                basic = getBasicInfoFromResponse(response);
+                citiesInfo.push(basic);
+            } catch (error) {
+                console.error(error);
+                window.alert(`${name} no encontrada.`);
+            }
+            
+        });
+        setBigCities(citiesInfo);
         //trae la info de las bigCities con getBasicInfoOfCity y las guarda en su Setter, si no puede alguna  no la agrega y muestra que no existe si error 404 con msjtio
     }, [bigCitiesNames]);
 
@@ -156,6 +177,7 @@ export const WeatherContextProvider = ({ children }) => {
         siguientesHoras, 
         siguientesDias, 
         bigCities,
+        bigCitiesNames,
         cambiarTemperatura,
         idiomas,
         setIdioma,
