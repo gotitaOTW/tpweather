@@ -9,28 +9,28 @@ export const WeatherContextProvider = ({ children }) => {
     const [nombreCiudadActual, setNombreCiudadActual] = useState("Buenos Aires");//hardcodeado, buscar como pedir la ubicacion
     const [idioma, setIdioma] = useState("sp");
 
-    const [ciudadActual, setCiudadActual] = useState({
-        name:"Buenos Aires",
-        pais: "AR",
-        temp:13,
-        sensTermica:15,
-        icon:"01d",
-        textClima:"despejado"
-    });//con el nombre de la ciudad carga acá la basicInfo
-    const [siguientesHoras, setSiguientesHoras] = useState([
-        { hora: "15:00", temp: 23, icon: "01d" },
-        { hora: "18:00", temp: 21, icon: "02d" },
-        { hora: "21:00", temp: 19, icon: "03n" },
-        { hora: "00:00", temp: 17, icon: "04n" },
-        { hora: "03:00", temp: 16, icon: "10n" },
-    ]);//array conn temp, icon y hora, proximos 5 objetos
-    const [siguientesDias, setSiguientesDias] = useState([
-        { fecha: "2025-08-21", max: 24, min: 15, icon: "01d" },
-        { fecha: "2025-08-22", max: 22, min: 14, icon: "02d" },
-        { fecha: "2025-08-23", max: 21, min: 13, icon: "03d" },
-        { fecha: "2025-08-24", max: 23, min: 14, icon: "04d" },
-        { fecha: "2025-08-25", max: 25, min: 16, icon: "01d" },
-    ]);//array con fecha, max/min y icon, proximos 5 objetos donde hora=12hs
+    // const [ciudadActual, setCiudadActual] = useState({
+    //     name:"Buenos Aires",
+    //     pais: "AR",
+    //     temp:13,
+    //     sensTermica:15,
+    //     icon:"01d",
+    //     textClima:"despejado"
+    // });//con el nombre de la ciudad carga acá la basicInfo
+    // const [siguientesHoras, setSiguientesHoras] = useState([
+    //     { hora: "15:00", temp: 23, icon: "01d" },
+    //     { hora: "18:00", temp: 21, icon: "02d" },
+    //     { hora: "21:00", temp: 19, icon: "03n" },
+    //     { hora: "00:00", temp: 17, icon: "04n" },
+    //     { hora: "03:00", temp: 16, icon: "10n" },
+    // ]);//array conn temp, icon y hora, proximos 5 objetos
+    // const [siguientesDias, setSiguientesDias] = useState([
+    //     { fecha: "2025-08-21", max: 24, min: 15, icon: "01d" },
+    //     { fecha: "2025-08-22", max: 22, min: 14, icon: "02d" },
+    //     { fecha: "2025-08-23", max: 21, min: 13, icon: "03d" },
+    //     { fecha: "2025-08-24", max: 23, min: 14, icon: "04d" },
+    //     { fecha: "2025-08-25", max: 25, min: 16, icon: "01d" },
+    // ]);//array con fecha, max/min y icon, proximos 5 objetos donde hora=12hs
     const [bigCitiesNames, setBigCitiesNames] = useState([
         "Madrid",
         "Nueva York",
