@@ -7,8 +7,12 @@ const value = useContext(WeatherContext);
         <>
         {/* mostrar los datos de {value} de forma bonita */}
             <div>
-                {value.ciudadActual.nombre}
-                
+                ciudad: {value.ciudadActual.name} <br></br>
+                pais: {value.ciudadActual.pais} <br></br>
+                temp: {value.ciudadActual.temp}<br></br>
+                feels like {value.ciudadActual.sensTermica}<br></br>
+                <img src={`https://openweathermap.org/img/wn/${value.ciudadActual.icon}@2x.png`} alt="Clima"/><br></br>
+                {value.ciudadActual.textClima}
             </div>
         </>
     )

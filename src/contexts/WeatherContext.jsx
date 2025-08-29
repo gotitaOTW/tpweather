@@ -6,7 +6,7 @@ export const WeatherContext = createContext();
 export const WeatherContextProvider = ({ children }) => {
     //https://api.openweathermap.org/data/2.5/forecast?q=Buenos Aires&appid=4dd92e406c57a71ac7d4ec01c8cd5a2d&units=metric&lang=es
     const [tipoTemperatura, setTipoTemperatura] = useState("metric");
-    const [nombreCiudadActual, setNombreCiudadActual] = useState("Buenos Aires");//hardcodeado, buscar como pedir la ubicacion
+    const [nombreCiudadActual, setNombreCiudadActual] = useState("Tokio");//hardcodeado, buscar como pedir la ubicacion
     const [idioma, setIdioma] = useState("sp");
 
     const [ciudadActual, setCiudadActual] = useState({});
@@ -61,11 +61,13 @@ export const WeatherContextProvider = ({ children }) => {
       
         try {
           const response = await axios.get(path);
-          console.log(response.data.city);
           return response.data;
 
         } catch (error) {
-          console.error("Error al traer data:", error);
+          console.error(`${ciudad} inválida: ${error}`);
+          const bigCitiesNamesActualizado = bigCitiesNames.filter((name)=>name!=ciudad);
+          setBigCitiesNames(bigCitiesNamesActualizado);
+          console.log(`${ciudad} borrada de bigCitiesNames`);
           return error;
         }
       };
@@ -73,7 +75,6 @@ export const WeatherContextProvider = ({ children }) => {
 
     const getBasicInfoFromResponse=(response)=>{
         if(!response)return null;
-        console.log(response.data.city);
         const basicInfo = {
             name: response.city.name,
             pais: response.city.country,
@@ -89,38 +90,44 @@ export const WeatherContextProvider = ({ children }) => {
     }
 
     useEffect(() => {
+                
+
         //trae la inof de ciudad actual con getBasicInfoOfCity, si no puede deja la que estaba y muestra que no existe si error 404 con msjtio bonito
         //filtra y guarda en siguientesDias tambien
         try {
-            const response = getResponseFromCity(nombreCiudadActual);
-            console.log(response);
-            const basicInfo = getBasicInfoFromResponse(response);
+            const fetchData = async()=>{
 
-            const sigHoras=[];
-            const sigDias=[];
-            for (let i = 0; i < 8; i++) {//sigHoras
-            let hora = {
-                hora:response.list[i].dt_txt,
-                temp:response.list[i].main.temp,
-                icon:response.list[i].weather.icon
+                const response = await getResponseFromCity(nombreCiudadActual);
+                const basicInfo = getBasicInfoFromResponse(response);
+               
+
+                const sigHoras=[];
+                const sigDias=[];
+                for (let i = 0; i < 8; i++) {//sigHoras
+                let hora = {
+                    hora:response.list[i].dt_txt,
+                    temp:response.list[i].main.temp,
+                    icon:response.list[i].weather.icon
+                }
+                sigHoras.push(hora); 
+                }
+                for (let i = 0; i < response.list.length; i+=8) {//sigDias
+                let dia = {
+                    dia:response.list[i].dt_txt,
+                    max:response.list[i].main.temp_max,
+                    min:response.list[i].main.temp_min,
+                    icon:response.list[i].weather.icon
+                }
+                sigDias.push(dia);
+                }
+                setCiudadActual(basicInfo);
+                setSiguientesHoras(sigHoras);
+                setSiguientesDias(sigDias);
             }
-            sigHoras.push(hora); 
-            }
-            for (let i = 0; i < response.list.length; i+=8) {//sigDias
-            let dia = {
-                dia:response.list[i].dt_txt,
-                max:response.list[i].main.temp_max,
-                min:response.list[i].main.temp_min,
-                icon:response.list[i].weather.icon
-            }
-            sigDias.push(dia);
-            }
-            setCiudadActual(basicInfo);
-            setSiguientesHoras(sigHoras);
-            setSiguientesDias(sigDias);
+            fetchData();
         } catch (error) {
             console.error(error);
-            if(nombreCiudadActual)window.alert(`${nombreCiudadActual} no encontrada.`);
+            if(nombreCiudadActual)window.alert(`${nombreCiudadActual} no encontrada`);
             setNombreCiudadActual(ciudadActual.name);
             //si el nombre solo sirve para buscar la ciudad, y, si no la encuentra no la pone por lo que hasta que no se cambie el nombre no va a cambiar la ciudad
             //entonces esta línea no sería necesaria pero por las dudas, además queda bien
@@ -128,21 +135,26 @@ export const WeatherContextProvider = ({ children }) => {
     }, [nombreCiudadActual]);
         
     useEffect(() => {
-        let response, basic;
-        let max, min;
-        const citiesInfo=[];
-        bigCitiesNames.forEach(name => {
-            try {
-                response = getResponseFromCity(name);
-                basic = getBasicInfoFromResponse(response);
-                citiesInfo.push(basic);
-            } catch (error) {
-                console.error(error);
-                window.alert(`${name} no encontrada.`);
-            }
-            
-        });
-        setBigCities(citiesInfo);
+        const fetchData= async ()=>{
+            let response, basic;
+                    const citiesInfo=[];
+                    for (const name of bigCitiesNames) {
+                        try {
+                            response = await getResponseFromCity(name);
+                            basic = getBasicInfoFromResponse(response);
+                            console.log(`basicinfo de ${basic.name}:
+                                ${basic}`)
+                            citiesInfo.push(basic);
+                        } catch (error) {
+                            window.alert(`${name} no encontrada.`);
+                            console.error(error);
+                        }
+                    };
+                    setBigCities(citiesInfo);
+                    console.log("la grande ciudade mi helmano")
+                    console.log(bigCities);
+        }
+        
         //trae la info de las bigCities con getBasicInfoOfCity y las guarda en su Setter, si no puede alguna  no la agrega y muestra que no existe si error 404 con msjtio
     }, [bigCitiesNames]);
 

@@ -15,10 +15,13 @@ const Buscadores=()=>{
         e.preventDefault();
         if(arrayAAgregar==="1"){
             value.setNombreCiudadActual(ciudad);
+            console.log(`Agregando ${ciudad} a ciudad actual`);
         }
         else{
-            value.setBigCitiesNames([ciudad, ...value.BigCitiesNames]);
-        }
+            value.setBigCitiesNames([ciudad, ...value.bigCitiesNames]);
+            console.log(`Agregando ${ciudad} a bigCities`);
+            console.log(`${value.bigCitiesNames}`);
+        }   
     }
 
     const cambiarTipoGrados = (e) =>{
